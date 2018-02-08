@@ -1,3 +1,5 @@
+
+
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -50,3 +52,5 @@ urls = ['http://sz.xiaozhu.com/search-duanzufang-p{}-0/'.format(number) for numb
 #获取列表页面
 for single_url in urls:
     get_links(single_url)
+
+# test
