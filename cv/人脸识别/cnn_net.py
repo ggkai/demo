@@ -154,7 +154,7 @@ class CnnNet:
         :param test_x: 测试数据
         :return: 返回样本预测类别和概率
         pre:样本属于各类别的概率，比如[0.1,0.2,0.8,0.5]
-        pre_num:样本预测类别
+        pre_num:样本预测类别[1,2,3,4,5,6]
         '''
         y_out=self.cnnLayer()
         with tf.Session() as sess:
