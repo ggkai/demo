@@ -77,23 +77,27 @@ class CnnNet:
 
     def cnnLayer(self):
         # 第一层卷积
-        # 输入train_x的shape:(560,64,64)
+        # 输入train_x的shape:(560,64,64,1)
         w1 = self.weight_Variable([3,3,1,32]) # 32个卷积核（3，3，1）
         b1 = self.bias_Variable([32]) # 32个偏置项
         conv1 = tf.nn.relu(self.conv2d(self.x, w1) + b1) #卷积层，输出（62，62，32）
         pool1 = self.max_pool_2x2(conv1) #池化层，输出（31，31，32）
+        drop1 = self.dropout(pool1,self.keep_prob_5)
 
         # 第二层卷积
         w2 = self.weight_Variable([3,3,32,64]) #64个卷积核（3，3，32）
         b2 = self.bias_Variable([64]) #64个偏置项
-        conv2 = tf.nn.relu(self.conv2d(pool1, w2) + b2) #卷积层，输出（29，29，64）
+        conv2 = tf.nn.relu(self.conv2d(drop1, w2) + b2) #卷积层，输出（29，29，64）
         pool2 = self.max_pool_2x2(conv2) #池化层，输出（14，14，64）
+        drop2 = self.dropout(pool2,self.keep_prob_5)
+
 
         # 第三层卷积
         w3 = self.weight_Variable([3,3,64,64]) #64个卷积核（3，3，64）
         b3 = self.bias_Variable([64]) #64个偏置项
-        conv3 = tf.nn.relu(self.conv2d(pool2, w3) + b3) #池化层，输出（12，12，64）
+        conv3 = tf.nn.relu(self.conv2d(drop2, w3) + b3) #池化层，输出（12，12，64）
         pool3 = self.max_pool_2x2(conv3) #池化层，输出（5，5，64）
+        drop3 = self.dropout(pool3,self.keep_prob_5)
 
         # 全链接层
         w_fcl1 = self.weight_Variable([8*8*64,512])  # 512个节点
@@ -102,15 +106,15 @@ class CnnNet:
         fcl1 = tf.nn.relu(tf.matmul(pool3_flat, w_fcl1) + b_fcl1)
 
         # dropout层
-        drop1 = self.dropout(fcl1,self.keep_prob_7)
+        drop4 = self.dropout(fcl1,self.keep_prob_7)
 
         # softmax输出层
         w_out = self.weight_Variable([512, self.outnode])
         b_out = self.bias_Variable([self.outnode])
-        y_out = tf.add(tf.matmul(drop1, w_out),b_out,name='out_data')
+        y_out = tf.add(tf.matmul(drop4, w_out),b_out,name='out_data')
         return y_out
 
-    def cnnTrain(self,maxiter=1000,acc_threshold=0.98,batch_size=100):
+    def cnnTrain(self,maxiter=500,acc_threshold=0.9,batch_size=100):
         '''
         训练模型
         :param maxiter: 迭代次数
@@ -140,7 +144,7 @@ class CnnNet:
             if i % 10 == 0: #间隔输出训练精度
                 acc = sess.run(accuracy_step, feed_dict={self.x:batch_x, self.y_:batch_y})
                 print('轮数:%d 训练精度:%f'%(i,acc))  # 打印输出，i为训练轮次
-                if acc > acc_threshold and i > 500 :
+                if acc > acc_threshold and i > 200 :
                     saver.save(sess,self.modelfile)
         sess.close()
 
