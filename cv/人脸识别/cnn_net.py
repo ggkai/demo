@@ -169,6 +169,6 @@ class CnnNet:
 if __name__ == '__main__':
     cnn_net=CnnNet()
     cnn_net.cnnTrain()#训练模型
-    # pre_num,pre=cnn_net.predict()
-    # test_acc=sum(tf.equal(pre_num, test_y)) / len(test_y)#测试精度
-    # print(test_acc)
+    pre_num,pre=cnn_net.predict()
+    test_acc=sum(tf.equal(pre_num, test_y)) / len(test_y)#测试精度
+    print(test_acc)
