@@ -67,7 +67,7 @@ class GetImgData:
         filepath_onehot,num_label=self.get_file_label()
         for filepath,onehot in filepath_onehot:
             for imgpath in self.get_file_path(filepath):
-                img=cv2.imread(imgpath,cv2.IMREAD_GRAYSCALE)
+                img=cv2.imread(imgpath)[:,:,0:1]
                 imgs.append(img)
                 labels.append(onehot)
         x=np.array(imgs,dtype='float32')/255
