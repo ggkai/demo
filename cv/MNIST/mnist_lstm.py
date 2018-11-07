@@ -13,34 +13,49 @@ LR=0.01 #学习速率
 
 #从本地读取mnist数据
 mnist=input_data.read_data_sets('./mnist_data',one_hot=True)
+'''
+训练集数据：mnist.train.images（55000，784）
+训练集标签：mnist.train.labels（55000,10）
+测试集数据：mnist.test.images（10000,784）
+测试集标签：mnist.test.labels（10000,10）
+验证集数据：mnist.validation.images（5000，784）
+验证集标签：mnist.validation.labels（5000，10）
+'''
 
 #占位符
-x=tf.placeholder(tf.float32,[None,TIME_STEP*INPUT_SIZE]) #(batch，28*28=784)
-tf_x=tf.reshape(x,[-1,TIME_STEP,BATCH_SIZE,1])# (-1,28,28,1)
-tf_y=tf.placeholder(tf.float32,[None,10]) #(10,)
+tf_x=tf.placeholder(tf.float32,[None,TIME_STEP*INPUT_SIZE]) #(batch，28*28=784)
+tf_y=tf.placeholder(tf.int32,[None,10]) #(batch,10)#注意数据类型
 
 #RNN
-rnn_cell=tf.nn.rnn_cell.BasicLSTMCell(num_units=256) #hidden size
+rnn_cell=tf.nn.rnn_cell.BasicLSTMCell(num_units=256) #hidden unit
 
-outputs,state=tf.nn.dynamic_rnn(rnn_cell,tf_x,initial_state=None,dtype=tf.float32) #(time step, batch, input)
+x_reshape=tf.reshape(tf_x,[-1,TIME_STEP,INPUT_SIZE])# (batch, height, width)
+outputs,state=tf.nn.dynamic_rnn(cell=rnn_cell,inputs=x_reshape,initial_state=None,dtype=tf.float32,time_major=False) #input数据要求(timestep, batch, input)
 
-output=tf.layer.dense(outputs[:,-1,:],10)
+output=tf.layers.dense(inputs=outputs[:,-1,:],units=10)
 
+#损失函数
 loss=tf.losses.softmax_cross_entropy(onehot_labels=tf_y,logits=output)
 
+#优化器
 train_step=tf.train.AdamOptimizer(LR).minimize(loss)
 
-accuracy=tf.metrics.accuracy(labels=tf.argmax(tf_y,axis=1),predictions=tf.argmax(output,axis=1),)[1]
+#计算准确率
+accuracy=tf.metrics.accuracy(labels=tf.argmax(tf_y,axis=1),predictions=tf.argmax(output,axis=1))[1]# 返回两个值，取第一个，即acc
 
+#会话
 sess=tf.Session()
 
+#全局变量、局部变量初始化
 init_op=tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
-
 sess.run(init_op)
 
-for step in range(500):
+#训练
+for step in range(TRAINGING_STEP):
+    #随机批量样本
     batch_x,batch_y=mnist.train.next_batch(BATCH_SIZE)
-    _,loss=sess.run([train_step,loss],feed_dict={tf_x:batch_x,tf_y:batch_y})
+    _,loss_=sess.run([train_step,loss],feed_dict={tf_x:batch_x,tf_y:batch_y})#返回两个值，取第二个，即loss，注意命名不能重复
     if step%50==0:
-        acc=sess.run(accuracy,feed_dict={tf_x:mnist.test.images[:2000],tf_y:mnist.test.labels[:2000]})
-        print(acc)
+        #测试集准确率
+        acc=sess.run(accuracy,feed_dict={tf_x:mnist.test.images,tf_y:mnist.test.labels})
+        print('train loss:',loss_,'test acc:',acc)
