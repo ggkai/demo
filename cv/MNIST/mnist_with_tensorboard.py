@@ -1,7 +1,8 @@
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
 
-mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+#从本地读取mnist数据
+mnist=input_data.read_data_sets('./mnist_data',one_hot=True)
 
 batch_size = 100
 hidden1_nodes = 200
