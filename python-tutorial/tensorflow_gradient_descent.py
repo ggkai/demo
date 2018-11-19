@@ -9,7 +9,7 @@ TRIN_STEP = 100
 REAL_W = 1.2
 REAL_B = 2.5
 INIT_W = 5
-INIT_B = 4
+INIT_B = 1
 
 #占位符
 tf_x=tf.placeholder(tf.float32,[None,1])
@@ -21,7 +21,8 @@ w=tf.Variable(initial_value=INIT_W,dtype=tf.float32)
 b=tf.Variable(initial_value=INIT_B,dtype=tf.float32)
 
 #定义模型
-y=tf.matmul(tf_x,w)+b
+y=tf_x*w+b
+# y=tf.matmul(tf_x,w)+b 需要2D
 
 #损失函数
 loss=tf.losses.mean_squared_error(tf_y,y)
@@ -58,12 +59,9 @@ ax=Axes3D(fig)
 w_3D,b_3D=np.meshgrid(np.linspace(-2,7,30),np.linspace(-2,7,30))#参数空间，二维矩阵
 
 loss_3D=np.array([np.mean(np.square((x_data * w_ + b_) - y_data)) for w_,b_ in zip(w_3D.ravel(),b_3D.ravel())]).reshape(w_3D.shape)
-ax.plot_surface(w_3D,b_3D,loss_3D,cmap=plt.get_cmap('rainbow'))
-# weight=np.array(w_list.ravel())
-# bias=np.array(b_list.ravel())
-
+ax.plot_surface(w_3D,b_3D,loss_3D,cmap=plt.get_cmap('rainbow'))#添加3D维度
 ax.scatter(w_list[0],b_list[0],zs=loss_list[0],s=300,c='r')#初始化参数空间
 ax.set_xlabel('w')
 ax.set_ylabel('b')
-ax.plot(w_list,b_list,zd=loss_list,zdir='z',c='r',lw=2)
+ax.plot(w_list,b_list,zs=loss_list,zdir='z',c='r',lw=5)
 plt.show()
