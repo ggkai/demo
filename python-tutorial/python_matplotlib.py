@@ -14,10 +14,23 @@ a=[1,2,3,4]
 plt.plot(a)
 
 plt.figure(2)
-plt.plot([1,2,3,4],[1,4,9,16])
+plt.plot([1,2,3,4],[1,4,9,16],'ro')
 
 plt.figure(3)
-plt.plot([1,2,3,4],[1,4,9,16],'ro')
+x=np.linspace(-2,2,10)
+y=2*x+1
+z=x**2
+plt.plot(x,y,label='linear line')
+plt.plot(x,z,color='red',label='square line',linewidth=1.0,linestyle='--')
+plt.legend()
+ax=plt.gca()
+ax.xaxis.set_ticks_position('bottom')
+ax.spines['bottom'].set_position(('data',0))
+ax.spines['top'].set_color('None')
+ax.yaxis.set_ticks_position('left')
+ax.spines['left'].set_position(('data',0))
+ax.spines['right'].set_color('None')
+
 
 plt.figure(4)
 b=np.arange(0,5,0.2)
@@ -123,15 +136,20 @@ ax.scatter(xs=x2,ys=y2,zs=z2)
 
 #等高线
 plt.figure(16)
-x=np.linspace(-3,3,n)
-y=np.linspace(-3,3,n)
+x=np.linspace(-3,3,10)
+y=np.linspace(-3,3,10)
 x,y=np.meshgrid(x,y)
-contourf(x,y,f(x,y),8,alpha=0.75,cmap='jet')
-
+z=(1 - x / 2 + x**5 + y**3) * np.exp(-x**2 -y**2)
+plt.contourf(x,y,z,8,alpha=0.75,cmap=plt.cm.hot)
+cb = plt.colorbar(orientation='horizontal')#添加颜色带，默认竖直放置
+cb.set_label('meters')
+C=plt.contour(x,y,z,8,colors='black', linewidth=0.5)
+plt.clabel(CS=C,inline=True, fontsize=10)
 
 #图片
-
-
+x=np.linspace(0,1,9).reshape(3,3)
+plt.imshow(X=x,interpolation='nearest',cmap='bone',origin='lower')
+plt.colorbar(shrink=0.9)
 
 plt.show()
 
