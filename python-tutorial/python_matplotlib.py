@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import animation
 
 #曲线图
 plt.figure(1)
@@ -22,7 +23,7 @@ y=2*x+1
 z=x**2
 plt.plot(x,y,label='linear line')
 plt.plot(x,z,color='red',label='square line',linewidth=1.0,linestyle='--')
-plt.legend()
+plt.legend()#加图例
 ax=plt.gca()
 ax.xaxis.set_ticks_position('bottom')
 ax.spines['bottom'].set_position(('data',0))
@@ -40,12 +41,12 @@ plt.plot(b,b,'r--',b,b**2,'bs',b,b**3,'g^')
 plt.figure(5)
 c=100+15*np.random.randn(1000)
 plt.hist(x=c,bins=50,density=1,color='g',alpha=0.5)
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title('histogram')
-plt.text(x=60,y=0.025,s=r'$\mu=100,\sigma=15$')
+plt.xlabel('x')#加轴标签
+plt.ylabel('y')#加轴标签
+plt.title('histogram')#加标题
+plt.text(x=60,y=0.025,s=r'$\mu=100,\sigma=15$')#加标注
 plt.axis(xmin=40,xmax=160,ymin=0,ymax=0.04)
-plt.annotate(s='hello',xy=(120,0.01),xytext=(140,0.02),arrowprops = dict(color='k',arrowstyle='->'))
+plt.annotate(s='hello',xy=(120,0.01),xytext=(140,0.02),arrowprops = dict(color='k',arrowstyle='->'))#加点标注
 plt.grid(True)
 
 #柱状图
@@ -62,10 +63,10 @@ e=np.random.uniform(0,10,10)
 f=np.random.uniform(0,10,10)
 plt.bar(x=d,height=e,width=0.5,edgecolor='w',facecolor='#9999ff')
 plt.bar(x=d,height=-f,width=0.5,edgecolor='w',facecolor='#ff9999')
-for x, y in zip(d,e):
+for x, y in zip(d,e): #数据加标签
     plt.text(x, y + 0.05, '%.2f' % y, ha='center', va='bottom')
 
-for x, y in zip(d,f):
+for x, y in zip(d,f): #数据加标签
     plt.text(x, -y - 0.05, '%.2f' % y, ha='center', va='top')
 
 #散点图
@@ -143,24 +144,41 @@ z=(1 - x / 2 + x**5 + y**3) * np.exp(-x**2 -y**2)
 plt.contourf(x,y,z,8,alpha=0.75,cmap=plt.cm.hot)
 cb = plt.colorbar(orientation='horizontal')#添加颜色带，默认竖直放置
 cb.set_label('meters')
-C=plt.contour(x,y,z,8,colors='black', linewidth=0.5)
+C=plt.contour(x,y,z,8,colors='black')
 plt.clabel(CS=C,inline=True, fontsize=10)
 
 #图片
+plt.figure(17)
 x=np.linspace(0,1,9).reshape(3,3)
 plt.imshow(X=x,interpolation='nearest',cmap='bone',origin='lower')
 plt.colorbar(shrink=0.9)
 
-plt.show()
+#动画
+fig=plt.figure(18)
+ax=plt.subplot()
+x=np.arange(0,2*np.pi,0.01)
+line,=ax.plot(x,np.sin(x))
+def animate(i):
+    line.set_ydata(np.sin(x+i/10.0))
+    return line,
+def init():
+    line.set_ydata(np.sin(x))
+    return line,
+ani=animation.FuncAnimation(fig=fig,func=animate,frames=100,init_func=init,interval=20,blit=False)
+#ani.save('line_animation.mp4',fps=30,extra_args=['-vcodec', 'libx264'])#保存动画
 
-'''
-补充：绘图设置
-坐标轴
-标题
-图例
-数据标签
-趋势线
-误差线
-设置图形svg、png
-中文显示
-'''
+#趋势线和平均线
+plt.figure(19)
+a = np.array([0.0, 1.0, 2.0, 3.0,  4.0,  5.0])
+b = np.array([0.0, 0.8, 0.9, 0.1, -0.8, -1.0])
+z = np.polyfit(a, b, deg=1)#deg=1表示1阶
+p = np.poly1d(z)
+font = {'family':'SimHei'} #设置使用的中文字体为SimHei
+plt.rc('font',**font)#设置显示中文字体
+plt.plot(a,b,label='data',color='c')#曲线
+plt.plot(a,p(a),label='Trend Lines趋势线',color='m')#趋势线
+plt.axhline(b.mean(),color='y')#平均线
+plt.legend()#添加图例
+#plt.savefig('TrendLines.png')
+
+plt.show()
