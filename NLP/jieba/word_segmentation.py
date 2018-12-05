@@ -13,6 +13,7 @@ jieba.add_word('Métiersd\'Art',freq=100,tag='custom')
 #自定义词典路径
 jieba.load_userdict(userdict_path)
 
+#默认精准搜索，cut_all=True全搜索/False精准搜索
 word_seg=jieba.cut(sentence=text,cut_all=False,HMM=True)
 
 print(word_seg)
