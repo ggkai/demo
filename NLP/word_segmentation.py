@@ -16,4 +16,5 @@ jieba.load_userdict(userdict_path)
 word_seg=jieba.cut(sentence=text,cut_all=False,HMM=True)
 
 print(word_seg)
+print('/'.join(word_seg))
 
