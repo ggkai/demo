@@ -10,47 +10,23 @@ text3='向香奈儿Métiersd\'Art高级手工坊致敬'
 '''
 方法一：TFIDF提取关键词
 '''
-idf_path='/idf.txt.big'
-stop_words_psth='/stopword.txt'
-userdict_path='userdict.txt'
-pos=('custom','ns','n','vn','nr')
+# POS提取的词性类型:a:形容词、n:名词、nr:人名、ns:地名、nt:机构团体、nz:其他专有名词、vn:动名词
+pos=('custom','n','nr','nrt','ns','nz','nt','vn','a')
+
+#自定义词
+jieba.add_word('',freq=100,tag='custom')
 
 #自定义idf文本语料库路径
-# jieba.analyse.set_idf_path(idf_path)
-# jieba.analyse.TFIDF(idf_path=pass)
+# jieba.analyse.set_idf_path('/idf.txt.big')
+# jieba.analyse.TFIDF(idf_path)
 
 #自定义停用词文本语料库路径
-# jieba.analyse.set_stop_words(stop_words_psth)
-
-#动态修改词典
-jieba.suggest_freq(('卡尔·拉格','Métiersd\'Art'),True)
-jieba.add_word('卡尔·拉格',freq=100,tag='custom')
-jieba.add_word('Métiersd\'Art',freq=100,tag='custom')
-
-#自定义词典路径
-jieba.load_userdict(userdict_path)
+# jieba.analyse.set_stop_words('stopwords.txt')
 
 #关键词提取
-'''
-allowPOS提取的词性类型
-a:形容词
-d:副词
-i:成语
-m:数词
-n:名词
-nr:人名
-ns:地名
-nt:机构团体
-nz:其他专有名词
-t:时间
-v:动词
-x:标点符号
-f:方位词
-un:未知
-'''
-tags=jieba.analyse.extract_tags(sentence=text3,topK=10,withWeight=False,allowPOS=())
+tags=jieba.analyse.extract_tags(sentence=text,topK=10,withWeight=False,allowPOS=pos)
 
-print(tags)
+print('IDF方法:',tags)
 
 
 '''
@@ -58,4 +34,4 @@ print(tags)
 '''
 # jieba.analyse.textrank(sentence=text, topK=20, withWeight=False, allowPOS=('ns', 'n', 'vn', 'v'))
 # jieba.analyse.TextRank()
-
+# print('TextRank方法:',tags)
