@@ -7,31 +7,30 @@ text="香奈儿的高级手工坊香奈儿CHANEL前天精湛手工艺每年12月
 
 text2='无与伦比的精湛工艺回应卡尔·拉格斐的卓绝创意'
 text3='向香奈儿Métiersd\'Art高级手工坊致敬'
-'''
-方法一：TFIDF提取关键词
-'''
+text4='山茶花及羽饰坊创立于 1880Lemarié山茶花及羽饰坊由Palmyre Coyette创立，其历史可追溯至1880年。它不仅专攻羽毛与花饰，还擅长制作“服装”（镶饰、荷叶边、褶绣…）以及各种褶饰'
+
 # POS提取的词性类型:a:形容词、n:名词、nr:人名、ns:地名、nt:机构团体、nz:其他专有名词、vn:动名词
 pos=('custom','n','nr','nrt','ns','nz','nt','vn','a')
 
 #自定义词
-jieba.add_word('',freq=100,tag='custom')
+jieba.add_word('羽饰坊',freq=100,tag='w')
 
 #自定义idf文本语料库路径
-# jieba.analyse.set_idf_path('/idf.txt.big')
-# jieba.analyse.TFIDF(idf_path)
+jieba.analyse.set_idf_path('../jieba/idf.txt.big')
+# jieba.analyse.TFIDF(../jieba/idf.txt.big')
 
 #自定义停用词文本语料库路径
-# jieba.analyse.set_stop_words('stopwords.txt')
+jieba.analyse.set_stop_words('../jieba/stop_words.txt')
 
-#关键词提取
-tags=jieba.analyse.extract_tags(sentence=text,topK=10,withWeight=False,allowPOS=pos)
-
-print('IDF方法:',tags)
-
+#
+'''
+方法一：TFIDF提取关键词
+'''
+tags_idf=jieba.analyse.extract_tags(sentence=text4,topK=10,withWeight=False,allowPOS=('w'))
+print('IDF方法:',tags_idf)
 
 '''
 方法二：TextRank提取关键词
 '''
-# jieba.analyse.textrank(sentence=text, topK=20, withWeight=False, allowPOS=('ns', 'n', 'vn', 'v'))
-# jieba.analyse.TextRank()
-# print('TextRank方法:',tags)
+tags_textrank=jieba.analyse.textrank(sentence=text,topK=100,withWeight=False,allowPOS=('w','a','n'))
+print('TextRank方法:',tags_textrank)

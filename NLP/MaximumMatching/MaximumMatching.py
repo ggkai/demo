@@ -1,6 +1,6 @@
 import re
 #读入词典
-with open('示例词典.txt','r') as f:
+with open('MaximumMatchingDict.txt','r') as f:
     dic=f.read()
 #去掉空格,替换为空
 dic=re.sub(' ','',dic)
