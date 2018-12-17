@@ -79,6 +79,7 @@ gensim similarity
 text3='妻子下落不明丈夫又与他人登记结婚是否为无效婚姻'
 simi_bow=dict.doc2bow(jieba.cut(text3))
 simi_tfidf=tfidf[simi_bow]
+simi_lsi=lsi[simi_tfidf]
 similarity = similarities.Similarity(output_prefix='-Similarity-index', corpus=corpus, num_features=999)#相似性索引
-corpus_similarity=similarity[simi_bow]#similarity检索,tfidf或者bow
+corpus_similarity=similarity[simi_bow]#similarity检索,选择simi_bow/simi_tfidf/simi_lsi
 print('corpus_similarity:',corpus_similarity)
